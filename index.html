@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Learning Cards for Kids</title>
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #ffe66d;
+            --bg: #f7f9fc;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-shadow: 2px 2px var(--accent);
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .category-title {
+            background-color: var(--secondary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            height: 350px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-radius: 20px;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 5px solid white;
+        }
+
+        .card-front {
+            background-color: white;
+        }
+
+        .card-back {
+            background-color: var(--accent);
+            transform: rotateY(180deg);
+            text-align: center;
+        }
+
+        .icon-container {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .icon-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .word {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-transform: lowercase;
+            text-align: center;
+        }
+
+        .sentence {
+            font-size: 1.8rem;
+            line-height: 1.4;
+            color: #555;
+            text-align: center;
+        }
+
+        .pattern-hint {
+            margin-top: 10px;
+            font-style: italic;
+            color: #888;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 50px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .card-container { height: 300px; }
+            .word { font-size: 2rem; }
+            .sentence { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Let's Learn English! 🌟</h1>
+    
+    <div class="container" id="content"></div>
+
+    <footer>Generated for curious little learners.</footer>
+
+    <script>
+        const data = [
+            {
+                category: "Drinks 🥤 (饮料)",
+                items: [
+                    { word: "soda", chinese: "苏打水", icon: "1.jpg", sentence: "I want some soda.", sentenceCn: "我想要一些苏打水。" },
+                    { word: "cola", chinese: "可乐", icon: "2.jpg", sentence: "I want some cola.", sentenceCn: "我想要一些可乐。" },
+                    { word: "lemonade", chinese: "柠檬汁", icon: "3.jpg", sentence: "I want some lemonade.", sentenceCn: "我想要一些柠檬汁。" }
+                ],
+                pattern: "I want some _ ."
+            },
+            {
+                category: "Vegetables 🥦 (蔬菜)",
+                items: [
+                    { word: "cabbage", chinese: "卷心菜", icon: "4.jpg", sentence: "Do you like cabbage? Yes, I do.", sentenceCn: "你喜欢卷心菜吗？是的，我喜欢。" },
+                    { word: "eggplant", chinese: "茄子", icon: "5.jpg", sentence: "Do you like eggplant? No, I don't.", sentenceCn: "你喜欢茄子吗？不，我不喜欢。" },
+                    { word: "cucumber", chinese: "黄瓜", icon: "6.jpg", sentence: "Do you like cucumber? Yes, I do.", sentenceCn: "你喜欢黄瓜吗？是的，我喜欢。" }
+                ],
+                pattern: "Do you like _ ?"
+            },
+            {
+                category: "Autumn 🍂 (秋天)",
+                items: [
+                    { word: "tree", chinese: "树", icon: "7.jpg", sentence: "I can see a tree.", sentenceCn: "我能看见一棵树。" },
+                    { word: "leaf", chinese: "树叶", icon: "8.jpg", sentence: "I can see a leaf.", sentenceCn: "我能看见一片树叶。" },
+                    { word: "bee", chinese: "蜜蜂", icon: "9.jpg", sentence: "I can see a bee.", sentenceCn: "我能看见一只蜜蜂。" },
+                    { word: "ant", chinese: "蚂蚁", icon: "10.jpg", sentence: "I can see an ant.", sentenceCn: "我能看见一只蚂蚁。" }
+                ],
+                pattern: "I can see _ ."
+            },
+            {
+                category: "Let's make it 🎨 (动手做)",
+                items: [
+                    { word: "paper", chinese: "纸", icon: "11.jpg", sentence: "I need some paper.", sentenceCn: "我需要一些纸。" },
+                    { word: "glue", chinese: "胶水", icon: "12.jpg", sentence: "I need some glue.", sentenceCn: "我需要一些胶水。" },
+                    { word: "scissors", chinese: "剪刀", icon: "13.jpg", sentence: "I need scissors.", sentenceCn: "我需要剪刀。" }
+                ],
+                pattern: "I need _ ."
+            },
+            {
+                category: "Sea Animals 🌊 (海洋动物)",
+                items: [
+				    { word: "jellyfish", chinese: "水母", icon: "14.jpg", sentence: "Can you see a jellyfish? Yes, I can.", sentenceCn: "你能看见水母吗？是的，我能。" },
+                    { word: "shark", chinese: "鲨鱼", icon: "15.jpg", sentence: "Can you see a shark? Yes, I can.", sentenceCn: "你能看见鲨鱼吗？是的，我能。" },
+                    { word: "dolphin", chinese: "海豚", icon: "16.jpg", sentence: "Can you see a dolphin? No, I can't.", sentenceCn: "你能看见海豚吗？不，我不能。" },
+                    { word: "starfish", chinese: "海星", icon: "17.jpg", sentence: "Can you see a starfish? No, I can't.", sentenceCn: "你能看见海星吗？不，我不能。" },
+
+                ],
+                pattern: "Can you see _? Yes, I can. No, I can’t"
+            },
+            {
+                category: "My Feelings 😊 (我的心情)",
+                items: [
+                    { word: "happy", chinese: "高兴", icon: "18.jpg", sentence: "I am happy.", sentenceCn: "我很开心。" },
+                    { word: "sad", chinese: "难过", icon: "19.jpg", sentence: "Don't be sad.", sentenceCn: "不要难过。" },
+                    { word: "angry", chinese: "生气", icon: "20.jpg", sentence: "Are you angry?", sentenceCn: "你生气了吗？" },
+                    { word: "tired", chinese: "累", icon: "21.jpg", sentence: "I feel tired.", sentenceCn: "我感到很累。" }
+                ],
+                pattern: "I am _ ."
+            },
+            {
+                category: "My Senses 👂 (我的感官)",
+                items: [
+                    { word: "taste", chinese: "尝", icon: "22.jpg", sentence: "I taste with my mouth.", sentenceCn: "我用嘴巴品尝。" },
+                    { word: "hear", chinese: "听", icon: "23.jpg", sentence: "I hear with my ears.", sentenceCn: "我用耳朵倾听。" },
+                    { word: "see", chinese: "看", icon: "24.jpg", sentence: "I see with my eyes.", sentenceCn: "我用眼睛观看。" },
+                    { word: "smell", chinese: "闻", icon: "25.jpg", sentence: "I smell with my nose.", sentenceCn: "我用鼻子闻味。" }
+                ],
+                pattern: "I can _ ."
+            },
+            {
+                category: "Different Tastes 🍋 (五味)",
+                items: [
+                    { word: "sweet", chinese: "甜", icon: "26.jpg", sentence: "It tastes sweet.", sentenceCn: "它尝起来很甜。" },
+                    { word: "bitter", chinese: "苦", icon: "27.jpg", sentence: "It tastes bitter.", sentenceCn: "它尝起来很苦。" },
+                    { word: "spicy", chinese: "辣", icon: "28.jpg", sentence: "It tastes spicy.", sentenceCn: "它尝起来很辣。" },
+                    { word: "sour", chinese: "酸", icon: "29.jpg", sentence: "It tastes sour.", sentenceCn: "它尝起来很酸。" },
+
+                ],
+                pattern: "It tastes _ ."
+            },
+            {
+                category: "Music 🎵 (音乐)",
+                items: [
+                    { word: "piano", chinese: "钢琴", icon: "30.jpg", sentence: "I can play the piano.", sentenceCn: "我会弹钢琴。" },
+                    { word: "drums", chinese: "鼓", icon: "31.jpg", sentence: "I can play the drums.", sentenceCn: "我会敲鼓。" },
+                    { word: "guitar", chinese: "吉他", icon: "32.jpg", sentence: "I can't play the guitar.", sentenceCn: "我不会弹吉他。" },
+                    { word: "violin", chinese: "小提琴", icon: "33.jpg", sentence: "I can't play the violin.", sentenceCn: "我不会拉小提琴。" }
+                ],
+                pattern: "I can play the _ ."
+            },
+            {
+                category: "At the restaurant 🍴 (餐厅)",
+                items: [
+                    { word: "plate", chinese: "盘子", icon: "34.jpg", sentence: "Pass me the plate. Yes, please. / No, thanks.", sentenceCn: "请把盘子递给我。好的，请。/ 不了，谢谢。" },
+                    { word: "spoon", chinese: "勺子", icon: "35.jpg", sentence: "Pass me the spoon. Yes, please. / No, thanks.", sentenceCn: "请把勺子递给我。好的，请。/ 不了，谢谢。" },
+                    { word: "knife", chinese: "刀", icon: "36.jpg", sentence: "Pass me the knife. Yes, please. / No, thanks.", sentenceCn: "请把刀子递给我。好的，请。/ 不了，谢谢。" },
+                    { word: "fork", chinese: "叉子", icon: "37.jpg", sentence: "Pass me the fork. Yes, please. / No, thanks.", sentenceCn: "请把叉子递给我。好的，请。/ 不了，谢谢。" }
+                ],
+                pattern: "Pass me the _. Yes, please. No, thanks."
+            },
+            {
+                category: "At the Park 🎡 (公园)",
+                items: [
+                    { word: "slide", chinese: "滑梯", icon: "38.jpg", sentence: "Let's play on the slide.", sentenceCn: "一起去滑滑滑梯吧。" },
+                    { word: "swing", chinese: "秋千", icon: "39.jpg", sentence: "Let's play on the swing.", sentenceCn: "一起去荡秋千吧。" },
+                    { word: "seesaw", chinese: "跷跷板", icon: "40.jpg", sentence: "Let's play on the seesaw.", sentenceCn: "一起去玩跷跷板。" },
+                    { word: "jungle gym", chinese: "攀爬架", icon: "41.jpg", sentence: "Let's play on the jungle gym.", sentenceCn: "一起去玩攀爬架。" }
+                ],
+                pattern: "Let's play on the _ ."
+            },
+            {
+                category: "Farm 🚜 (农场)",
+                items: [
+                    { word: "ox", chinese: "公牛", icon: "42.jpg", sentence: "What can you see? I can see an ox.", sentenceCn: "你能看到什么？我看到一只公牛。" },
+                    { word: "chick", chinese: "小鸡", icon: "43.jpg", sentence: "What can you see? I can see a chick.", sentenceCn: "你能看到什么？我看到一只小鸡。" },
+                    { word: "rabbit", chinese: "兔子", icon: "44.jpg", sentence: "What can you see? I can see a rabbit.", sentenceCn: "你能看到什么？我看到一只兔子。" },
+                    { word: "dove", chinese: "鸽子", icon: "45.jpg", sentence: "What can you see? I can see a dove.", sentenceCn: "你能看到什么？我看到一只鸽子。" }
+                ],
+                pattern: "I see an _ ."
+            },
+            {
+                category: "Winter ❄️ (冬天)",
+                items: [
+                    { word: "gloves", chinese: "手套", icon: "46.jpg", sentence: "It’s cold. You need gloves.", sentenceCn: "太冷了，你需要一副手套。" },
+                    { word: "quilt", chinese: "被子", icon: "47.jpg", sentence: "It’s cold. You need a warm quilt.", sentenceCn: "太冷了，你需要一条暖和的被子。" },
+                    { word: "scarf", chinese: "围巾", icon: "48.jpg", sentence: "It’s cold. You need a scarf.", sentenceCn: "太冷了，你需要一条围巾。" }
+                ],
+                pattern: "It's cold, you need _."
+            },
+            {
+                category: "School Things ✏️ (文具)",
+                items: [
+                    { word: "pencil", chinese: "铅笔", icon: "49.jpg", sentence: "You need some pencils.", sentenceCn: "你需要一些铅笔。" },
+                    { word: "rubber", chinese: "橡皮", icon: "50.jpg", sentence: "I need a rubber.", sentenceCn: "我需要一块橡皮。" },
+                    { word: "crayon", chinese: "蜡笔", icon: "51.jpg", sentence: "I like these crayons.", sentenceCn: "我喜欢这些蜡笔。" }                
+				],
+                pattern: "Show me your _ ."
+            },
+            {
+                category: "My Face 👃 (我的脸)",
+                items: [
+                    { word: "eye", chinese: "眼睛", icon: "52.jpg", sentence: "Close your eyes.", sentenceCn: "闭上眼睛。" },
+                    { word: "ear", chinese: "耳朵", icon: "53.jpg", sentence: "Touch your ears.", sentenceCn: "摸摸耳朵。" },
+                    { word: "nose", chinese: "鼻子", icon: "54.jpg", sentence: "Touch your nose.", sentenceCn: "摸摸鼻子。" },
+                    { word: "mouth", chinese: "嘴巴", icon: "55.jpg", sentence: "Open your mouth.", sentenceCn: "张开嘴巴。" }
+                ],
+                pattern: "This is my _ ."
+            },
+            {
+                category: "Do with me 💃 (和我一起做)",
+                items: [
+                    { word: "clap", chinese: "鼓掌", icon: "56.jpg", sentence: "I can clap.", sentenceCn: "我能鼓掌。" },
+                    { word: "nod", chinese: "点头", icon: "57.jpg", sentence: "He can nod.", sentenceCn: "他可以点头。" },
+                    { word: "jump", chinese: "跳", icon: "58.jpg", sentence: "I can jump .", sentenceCn: "我可以跳。" },
+                    { word: "stomp", chinese: "踩", icon: "59.jpg", sentence: "She can snomp.", sentenceCn: "她可以踩。" }
+                ],
+                pattern: "I can _ ."
+            },
+            {
+                category: "Hungry 🍕 (饿了)",
+                items: [
+                    { word: "hungry", chinese: "饥饿", icon: "60.jpg", sentence: "I’m hungry.", sentenceCn: "我饿了。" },
+                    { word: "vegetable", chinese: "蔬菜", icon: "61.jpg", sentence: "I want some vegetables.", sentenceCn: "我想要一些蔬菜。" },
+                    { word: "fish", chinese: "鱼", icon: "62.jpg", sentence: "I want some fish.", sentenceCn: "我想要一些鱼。" },
+                    { word: "chicken", chinese: "鸡肉", icon: "63.jpg", sentence: "I want some chicken.", sentenceCn: "我想要一些鸡肉。" }
+                ],
+                pattern: "I'm hungry, I want _ ."
+            },
+            {
+                category: "Thirsty 🥤 (渴了)",
+                items: [
+                    { word: "thirsty", chinese: "渴了", icon: "64.jpg", sentence: "I’m thirsty.", sentenceCn: "我渴了。" },
+                    { word: "milk", chinese: "牛奶", icon: "65.jpg", sentence: "I want some milk.", sentenceCn: "我想要喝牛奶。" },
+                    { word: "juice", chinese: "果汁", icon: "66.jpg", sentence: "Drink some juice.", sentenceCn: "喝点果汁。" },
+                    { word: "water", chinese: "水", icon: "67.jpg", sentence: "I want some water.", sentenceCn: "我想喝水。" }
+                ],
+                pattern: "I'm thirsty, I want _ ."
+            }, 
+			{
+                category: "The Spring Festival 🧧 (春节)",
+                items: [
+                    { word: "wear new clothes", chinese: "穿新衣", icon: "68.jpg", sentence: "What do you do at the Spring Festival? I wear new clothes.", sentenceCn: "春节你干什么？我会穿新衣服。" },
+                    { word: "get red packets", chinese: "拿红包", icon: "69.jpg", sentence: "I get red packets", sentenceCn: "拿红包。" },
+                    { word: "eat jiaozi", chinese: "吃饺子", icon: "70.jpg", sentence: "I eat jiaozi.", sentenceCn: "吃饺子。" }                   
+                ],
+                pattern: "Happy Spring Festival! _ ."
+            },
+            {
+                category: "Colours 🎨 (颜色)",
+                items: [
+                    { word: "colour", chinese: "颜色", icon: "71.jpg", sentence: "What colour do you like?", sentenceCn: "你喜欢什么颜色" },
+                    { word: "red", chinese: "红色", icon: "72.jpg", sentence: "I like red.", sentenceCn: "我喜欢红色。" },					
+                    { word: "blue", chinese: "蓝色", icon: "73.jpg", sentence: "I don't like blue.", sentenceCn: "我不喜欢蓝色。" },
+                    { word: "yellow", chinese: "黄色", icon: "74.jpg", sentence: "I like yellow.", sentenceCn: "我喜欢黄色。" }
+                ],
+                pattern: "It is _ ."
+            },
+            {
+                category: "Where is it 📍 (在哪里)",
+                items: [
+                    { word: "under", chinese: "在...下", icon: "75.jpg", sentence: "Where is it? It's under the tree.", sentenceCn: "它在哪里？它在树下。" },
+                    { word: "in", chinese: "在...里", icon: "76.jpg", sentence: "Where is it? It's in the box.", sentenceCn: "它在哪里？它在盒子里。" },
+                    { word: "on", chinese: "在...上", icon: "77.jpg", sentence: "Where is it? It's on the desk.", sentenceCn: "它在哪里？它在桌子上。" }
+                ],
+                pattern: "Where is it? It’s _."
+            }
+        ];
+
+        const container = document.getElementById('content');
+
+        data.forEach(cat => {
+            const section = document.createElement('div');
+            section.className = 'category-section';
+            
+            const title = document.createElement('div');
+            title.className = 'category-title';
+            title.innerText = cat.category;
+            section.appendChild(title);
+
+            const grid = document.createElement('div');
+            grid.className = 'cards-grid';
+
+            cat.items.forEach(item => {
+                const cardCont = document.createElement('div');
+                cardCont.className = 'card-container';
+                cardCont.onclick = function() {
+                    this.querySelector('.card').classList.toggle('is-flipped');
+                };
+
+                const iconHtml = `<img class="icon-img" src="${item.icon}" alt="${item.word}" onerror="this.src='https://img.icons8.com/plasticine/100/star.png'">`;
+
+                cardCont.innerHTML = `
+                    <div class="card">
+                        <div class="card-face card-front">
+                            <div class="icon-container">
+                                ${iconHtml}
+                            </div>
+                            <div class="word">${item.word}</div>
+                            <div style="font-size: 1.2rem; color: #888; margin-top: 5px;">${item.chinese}</div>
+                        </div>
+                        <div class="card-back card-face">
+                            <div class="sentence">${item.sentence}</div>
+                            <div style="font-size: 1.2rem; color: #555; margin-top: 10px;">${item.sentenceCn}</div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(cardCont);
+            });
+
+            section.appendChild(grid);
+            container.appendChild(section);
+        });
+    </script>
+</body>
+</html>
